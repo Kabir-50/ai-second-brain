@@ -1,0 +1,8 @@
+# Start ChromaDB server and run this command in backend folder on other terminal
+# chroma run --host localhost --port 8000 --path ./chroma_db
+
+# Start the backend server
+# npm run dev
+
+# Start the frontend server
+# npm run dev

@@ -4,15 +4,30 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "3000:3000"
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
 
   backend:
     build: ./backend
     ports:
       - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/ai-second-brain
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL=${GEMINI_MODEL}
+      - CHROMA_URL=http://chromadb:8000
+      - NODE_ENV=production
     depends_on:
       - mongo
       - chromadb
+    volumes:
+      - uploads_data:/app/uploads
+    restart: unless-stopped
 
   mongo:
     image: mongo:7
@@ -20,6 +35,7 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    restart: unless-stopped
 
   chromadb:
     image: chromadb/chroma:latest
@@ -27,7 +43,9 @@ services:
       - "8000:8000"
     volumes:
       - chroma_data:/chroma/chroma
+    restart: unless-stopped
 
 volumes:
   mongo_data:
   chroma_data:
+  uploads_data:
